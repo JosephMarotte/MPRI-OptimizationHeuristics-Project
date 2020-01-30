@@ -155,12 +155,37 @@ upper bounds for $(1+1)\text{-EA}$.
 
     In the end:
 
-    $$\mathbf{E}[T]\ge \mathbf{P}[T>t_n] t_n=(1-o(1))\left(1-\frac{\log \log n}{\log n}\right)(n^2-1)\log n\sim n^2\log n$$\qedhere
+    $$\mathbf{E}[T]\ge \mathbf{P}[T>t_n] t_n=(1-o(1))\left(1-\frac{\log \log n}{\log n}\right)(n^2-1)\log n\sim n^2\log n\qedhere$$
 \end{proof}
 
 \begin{remark}
     We are in a very different regime from what happens for $f:\{0,1\}^{n \log_2 n}\to \mathbb{R}_+$. Getting yes/no
     answers from groups of $\log_2 n$ pieces together somehow results in an additional $n$ factor in the efficiency of $(1+1)\text{-EA}$.
 \end{remark}
+
+We now give an upper bound for Erdos-Renyi method:
+
+\begin{theorem}
+    For all $\epsilon>0$:
+
+    $$\mathbf{E}[\mathcal{T}(\text{ER}, \text{MM}_n)]\le (3+\epsilon) en\log n+o_\epsilon(1)$$
+\end{theorem}
+
+\begin{proof}
+    The probability that the color $c>0$ at position $1\le p\le n$
+    was not chosen in any sample $x^i$ such that $f(x^i)=0$ and $1\le i\le t$
+    is upper bounded by:
+
+    $$\left(1-\left(1-\frac{1}{n}\right)^{n-1}\frac{1}{n}\right)^t\le \exp\left(-t\left(1-\frac{1}{n}\right)^{n-1}\frac{1}{n}\right)\le\exp\left(-\frac{t}{en}\right)$$
+
+    Let $T$ be the first point in time when all nonzero colors at every position have
+    been chosen in a sample that evaluated to zero. Then by a union bound:
+
+    $$\mathbf{P}[T\ge t]\le n^2 \exp\left(-\frac{t}{en}\right)$$
+
+    Let $t_n\mydef (3+\epsilon)en\log n$. Then:
+
+    $$\mathbf{E}[T]\le \sum_{t=1}^{t_n} \mathbf{P}[T\ge t] +\sum_{t>t_n} \mathbf{P}[T\ge t]\le t_n+\sum_{t>t_n} \frac{1}{n^{1+\epsilon}}\le t_n+o_{\epsilon}(1)$$
+\end{proof}
 
 \end{document}
