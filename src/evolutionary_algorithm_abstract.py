@@ -1,4 +1,4 @@
-from utils import generate_random_disposition
+from utils import *
 
 
 class EvolutionaryAlgorithm:
@@ -29,17 +29,21 @@ class EvolutionaryAlgorithm:
     def variation(self):
         raise NotImplementedError
 
+    def evaluate_fitness(self, array_to_evaluate):
+        self.number_of_call_made += len(array_to_evaluate)
+        return np.fromiter((number_of_equals_elements(x, self.array_to_guess) for x in array_to_evaluate), np.int)
+
     def evaluate_fitness_population(self):
-        raise NotImplementedError
+        self.population_fitness = self.evaluate_fitness(self.population)
 
     def evaluate_fitness_offspring(self):
-        raise NotImplementedError
+        self.offspring_fitness = self.evaluate_fitness(self.offspring)
 
     def selection(self):
         raise NotImplementedError
 
     def loop_condition(self):
-        raise NotImplementedError
+        return self.population[-1] == self.array_size  # compare max of population with goal
 
     def evolutionary_algorithm(self):
         self.generate_initial_population()

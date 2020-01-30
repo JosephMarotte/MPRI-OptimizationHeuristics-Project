@@ -1,7 +1,6 @@
 import numpy as np
 import operator
 from evolutionary_algorithm_abstract import *
-from utils import number_of_equals_elements
 
 
 class EvolutionStrategy(EvolutionaryAlgorithm):
@@ -19,19 +18,6 @@ class EvolutionStrategy(EvolutionaryAlgorithm):
 
     def variation(self):
         self.offspring = [self.mutate_random_parent() for _ in range(self.offspring_size)]
-
-    def evaluate_fitness(self, array_to_evaluate):
-        self.number_of_call_made += len(array_to_evaluate)
-        return np.fromiter((number_of_equals_elements(x, self.array_to_guess) for x in array_to_evaluate), np.int)
-
-    def evaluate_fitness_population(self):
-        self.population_fitness = self.evaluate_fitness(self.population)
-
-    def evaluate_fitness_offspring(self):
-        self.offspring_fitness = self.evaluate_fitness(self.offspring)
-
-    def loop_condition(self):
-        return self.population[-1] == self.array_size  # compare max of population with goal
 
     def selection(self):
         raise NotImplementedError
@@ -55,7 +41,6 @@ class EvolutionStrategySelectingPopulationAndOffspring(EvolutionStrategy):
         super().__init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate)
 
     def selection(self):
-        # TODO could be improved because we know self.population is already sorted
         fitness = np.concatenate(self.offspring_fitness, self.population_fitness)
         population = np.concatenate(self.offspring, self.population)
         zipped = list(zip(fitness, population))
