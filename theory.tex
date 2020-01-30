@@ -166,9 +166,7 @@ upper bounds for $(1+1)\text{-EA}$.
 We now give an upper bound for Erdos-Renyi method:
 
 \begin{theorem}
-    For all $\epsilon>0$:
-
-    $$\mathbf{E}[\mathcal{T}(\text{ER}, \text{MM}_n)]\le (3+\epsilon) en\log n+o_\epsilon(1)$$
+    $$\mathbf{E}[\mathcal{T}(\text{ER}, \text{MM}_n)]\le 2en(\log n+1)$$
 \end{theorem}
 
 \begin{proof}
@@ -183,9 +181,11 @@ We now give an upper bound for Erdos-Renyi method:
 
     $$\mathbf{P}[T\ge t]\le n^2 \exp\left(-\frac{t}{en}\right)$$
 
-    Let $t_n\mydef (3+\epsilon)en\log n$. Then:
+    Let $t_n\mydef 2en\log n$. Then:
 
-    $$\mathbf{E}[T]\le \sum_{t=1}^{t_n} \mathbf{P}[T\ge t] +\sum_{t>t_n} \mathbf{P}[T\ge t]\le t_n+\sum_{t>t_n} \frac{1}{n^{1+\epsilon}}\le t_n+o_{\epsilon}(1)$$
+    $$\mathbf{E}[T]\le \sum_{t=1}^{t_n} \mathbf{P}[T\ge t] +\sum_{t>t_n} \mathbf{P}[T\ge t]
+    \le t_n+n^2 \frac{e^{-\frac{t_n}{en}}}{1-e^{-\frac{1}{en}}}= t_n+\frac{1}{1-e^{\frac{1}{en}}}\le 2en\log n+2en$$
+
 \end{proof}
 
 \end{document}
