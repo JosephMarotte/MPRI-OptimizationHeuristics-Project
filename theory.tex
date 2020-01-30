@@ -1,0 +1,166 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+%\usepackage{amsfonts}
+%\usepackage{geometry}
+%\usepackage{graphicx}
+%\usepackage{url}
+%\usepackage{amsthm}
+%\usepackage{float}
+\usepackage{mathpazo}
+
+\usepackage
+[
+    a4paper,
+    left=1.5cm,
+    right=2.5cm,
+    top=1.5cm,
+    bottom=2cm
+]{geometry}
+
+\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+
+\usepackage{amsthm}
+\theoremstyle{definition}
+\newtheorem*{definition}{Definition}
+\newtheorem*{notation}{Notation}
+\newtheorem*{example}{Example}
+\newtheorem*{problem}{Problem}
+\theoremstyle{plain}
+\newtheorem*{lemma}{Lemma}
+\newtheorem*{theorem}{Theorem}
+\newtheorem*{proposition}{Proposition}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+% Maths operators 
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\Sep}{Sep}
+\DeclareMathOperator{\Conv}{Conv}
+
+% My commands
+\newcommand{\myequiv}[1]{\underset{#1}{\sim}}
+\newcommand\mydef{\mathrel{\overset{\makebox[0pt]{\mbox{\normalfont\tiny\sffamily def}}}{=}}}
+
+\title{Analysis of local-search heuristics for Mastermind with $n$ colors}
+\author{}
+\date{}
+\begin{document}
+
+\maketitle
+
+Here we prove tight lower bounds and upper bounds for RLS, and almost tight lower bounds and
+upper bounds for $(1+1)\text{-EA}$.
+
+\begin{notation}
+    \begin{itemize}
+        \item[]
+        \item $\log$ denotes the logarithm in base $e$.
+        \item $[n]\mydef \{1,\ldots,n\}$
+        \item $H_n\mydef \sum_{i=1}^n \frac{1}{i}$
+    \end{itemize}
+\end{notation}
+
+\begin{definition}[$\text{MM}_n$]
+    As all our algorithms will be unbiased, we consider the objective function $f:[n]^n\to \mathbf{R}_+$ defined by:
+
+    $$f(x)\mydef \sum_{i=1}^{n} \mathbf{1}_{x_i=0}$$
+\end{definition}
+
+\begin{remark}
+    For RLS, we initialize $x\in_R [n]^n$ and at each step we choose an index
+    $i\in_R [n]$ and a shift $s\in_R [n-1]$.
+\end{remark}
+
+
+\begin{theorem}
+    $$\mathbf{E}[\mathcal{T}(\text{RLS},\text{MM}_n)]\myequiv{n\to\infty} n^2 \log n$$
+\end{theorem}
+
+\begin{proof}
+    Let $x^0, \ldots x^t$ be the successive queries of RLS.
+    Let $T_i\mydef \min\{t\mid f(x^t)\ge i\}$. Note that for all $i\ge i_0$, the
+    variable $T_{i+1}-T_i$ conditioned on $f(x^0)=i_0$ follows a geometric distribution
+    with parameter $\frac{n-i}{n}\frac{1}{n-1}$. So:
+
+    $$\mathbf{E}[T_{i+1}-T_i\mid f(x^0)=i_0]=\frac{n(n-1)}{n-i}$$
+    
+    And it follows that:
+    
+    $$\mathbf{E}[T_{n}\mid f(x^0)=i_0]=n(n-1)\sum_{i=i_0}^{n-1} \frac{1}{n-i}=n(n-1)H_{n-i_0}$$
+
+    If $c_n\mydef \sqrt{n\log n}$, by additive Chernoff bounds:
+
+    $$\mathbf{P}[f(x^0)> 1+c_n]\le \exp(-2\log n)=\frac{1}{n^2}$$
+
+    So:
+
+    $$\mathbf{E}[T_n]=n(n-1)\sum_{i_0\le 1+c_n} H_{n-i_0} \mathbf{P}[f(x^0)=i_0]+o(1)$$
+
+    Finally:
+
+    $$\left(1-\frac{1}{n^2}\right)\log(n-1-c_n)\le \sum_{i_0\le 1+c_n} H_{n-i_0} \mathbf{P}[f(x^0)=i_0]\le 1+\log n$$
+    
+    Hence $\mathbf{E}[T_n]\myequiv{n\to\infty} n^2\log n$.\qedhere
+
+\end{proof}
+
+\begin{remark}
+    For $(1+1)\text{-EA}$, we consider $p=\frac{1}{n}$.
+\end{remark}
+
+\begin{theorem}
+    $$\mathbf{E}[\mathcal{T}((1+1)\text{-EA},\text{MM}_n)]\le e n^2 (\log n+1)$$
+\end{theorem}
+
+\begin{proof}
+    We apply the fitness local method. Let $x$ be the current state of the variable and $y$ the transformed one. 
+
+    $$\mathbf{P}[f(y)>i\mid f(x)=i]\ge (n-i)\left(1-\frac{1}{n}\right)^{n-1} \frac{1}{n^2}\ge \frac{n-i}{e n^2}$$
+
+    So:
+
+    $$\mathbf{E}[\mathcal{T}((1+1)\text{-EA},\text{MM}_n)]\le e n^2 H_n\le e n^2(\log n+1)$$\qedhere
+\end{proof}
+
+\begin{theorem}
+    $$\mathbf{E}[\mathcal{T}((1+1)\text{-EA},\text{MM}_n)]\ge n^2 \log n+o(n^2\log n)$$
+\end{theorem}
+
+\begin{proof}
+    Let $X_{j,t}$ be the indicator of the event ``the $j$-th position is incorrect in $x^0$ and zero has
+    never been drawn out for this position in the first $t$ iterations''. Let:
+
+    $$t_n\mydef \left(1-\frac{\log \log n}{\log n}\right)(n^2-1)\log n$$
+
+    Then at this time:
+
+    $$\mathbf{P}[X_{j,t_n}=1]=
+    \left(1-\frac{1}{n}\right)\left(1-\frac{1}{n^2}\right)^{\left(1-\frac{\log\log n}{\log n}\right)(n^2-1)\log n}\ge \frac{\log n}{2n}
+    $$
+
+    We deduce:
+
+    $$\mathbf{E}\left[\sum_{j=1}^n X_{j,t_n}\right] \ge \frac{\log n}{2}$$
+
+    And by multiplicative Chernoff bounds:
+
+    $$\mathbf{P}\left[\sum_{j=1}^n X_{j,t_n}\le \frac{\log n}{4}\right] \le \exp\left(-\frac{\log n}{16}\right)=o(1)$$
+
+    If $T$ denotes the time at which we find the optimal solution:
+
+    $$\mathbf{P}[T\le t_n]\le \mathbf{P}\left[\sum_{j=1}^n X_{j,t_n} \le \frac{\log n}{4}\right]=o(1)$$
+
+    In the end:
+
+    $$\mathbf{E}[T]\ge \mathbf{P}[T>t_n] t_n=(1-o(1))\left(1-\frac{\log \log n}{\log n}\right)(n^2-1)\log n\sim n^2\log n$$\qedhere
+\end{proof}
+
+\begin{remark}
+    We are in a very different regime from what happens for $f:\{0,1\}^{n \log_2 n}\to \mathbb{R}_+$. Getting yes/no
+    answers from groups of $\log_2 n$ pieces together somehow results in an additional $n$ factor in the efficiency of $(1+1)\text{-EA}$.
+\end{remark}
+
+\end{document}
