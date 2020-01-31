@@ -1,5 +1,5 @@
 import numpy as np
-import operator
+from utils import standard_value_mutation
 from evolutionary_algorithm_abstract import *
 
 
@@ -29,10 +29,7 @@ class EvolutionStrategySelectingOffspring(EvolutionStrategy):
         super().__init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate)
 
     def selection(self):
-        zipped = list(zip(self.offspring_fitness, self.offspring))
-        zipped = sorted(zipped, key=operator.itemgetter(1))
-        zipped = zipped[:-self.population_size]
-        self.population_fitness, self.population = zip(*zipped)  # unzip
+        self.comma_selection()
 
 
 class EvolutionStrategySelectingPopulationAndOffspring(EvolutionStrategy):
@@ -41,22 +38,8 @@ class EvolutionStrategySelectingPopulationAndOffspring(EvolutionStrategy):
         super().__init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate)
 
     def selection(self):
-        fitness = np.concatenate(self.offspring_fitness, self.population_fitness)
-        population = np.concatenate(self.offspring, self.population)
-        zipped = list(zip(fitness, population))
-        zipped = sorted(zipped, key=operator.itemgetter(1))
-        zipped = zipped[:-self.population_size]
-        self.population_fitness, self.population = zip(*zipped)  # unzip
+        self.elitist_selection()
 
 
 def compute_new_guess(guess, number_of_colors, mutation_rate):
     return np.fromiter((standard_value_mutation(x, number_of_colors, mutation_rate) for x in guess), np.int)
-
-
-def standard_value_mutation(previous_color, number_of_colors, mutation_rate):
-    if np.random.random() <= mutation_rate:
-        new_color = np.random.randint(0, number_of_colors)
-        while new_color == previous_color:
-            new_color = np.random.randint(0, number_of_colors)
-        return new_color
-    return previous_color

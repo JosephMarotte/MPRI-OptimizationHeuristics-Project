@@ -1,3 +1,4 @@
+import operator
 from utils import *
 
 
@@ -38,6 +39,20 @@ class EvolutionaryAlgorithm:
 
     def evaluate_fitness_offspring(self):
         self.offspring_fitness = self.evaluate_fitness(self.offspring)
+
+    def comma_selection(self):
+        zipped = list(zip(self.offspring_fitness, self.offspring))
+        zipped = sorted(zipped, key=operator.itemgetter(1))
+        zipped = zipped[:-self.population_size]
+        self.population_fitness, self.population = zip(*zipped)  # unzip
+
+    def elitist_selection(self):
+        fitness = np.concatenate(self.offspring_fitness, self.population_fitness)
+        population = np.concatenate(self.offspring, self.population)
+        zipped = list(zip(fitness, population))
+        zipped = sorted(zipped, key=operator.itemgetter(1))
+        zipped = zipped[:-self.population_size]
+        self.population_fitness, self.population = zip(*zipped)  # unzip
 
     def selection(self):
         raise NotImplementedError
