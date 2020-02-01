@@ -20,3 +20,13 @@ def standard_value_mutation(previous_color, number_of_colors, mutation_rate):
             new_color = np.random.randint(0, number_of_colors)
         return new_color
     return previous_color
+
+
+# Get the smallest greater disposition
+# Warning this mutate array
+def get_smallest_greater_disposition(array, number_of_colors):
+    for i in range(len(array)):
+        array[i] = (array[i] + 1) % number_of_colors
+        if array[i] != 0:
+            break
+    return array
