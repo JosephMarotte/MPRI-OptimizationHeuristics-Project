@@ -1,4 +1,5 @@
 from src.utils import generate_random_disposition, number_of_equals_elements, get_smallest_greater_disposition
+from src.mastermind_problem import MasterMindProblemAbstract
 from math import exp, ceil, log
 import numpy as np
 
@@ -11,24 +12,14 @@ class ErdosRenyiHasMultipleSolution(Exception):
 # Pick a number of random disposition and check their number of equals elements with the disposition to guess
 # For every possible disposition for every random disposition previously picked, check whether the number of equals
 #   elements is the same as for the disposition to guess
-class ErdosRenyiLike:
-    array_size = None
-    number_of_colors = None
-    number_of_call_made = None
-    array_to_guess = None
-
+class ErdosRenyiLike(MasterMindProblemAbstract):
     def __init__(self, array_size, number_of_colors):
-        self.array_size = array_size
-        self.number_of_colors = number_of_colors
-
-    def set_array_to_guess(self, array_to_guess):
-        self.number_of_call_made = 0
-        self.array_to_guess = array_to_guess
+        super().__init__(array_size, number_of_colors)
 
     def algorithm(self):
         assert (self.array_to_guess is not None)
         max_number_of_call_needed = ceil(2 * exp(1) * self.array_size * (log(self.array_size, 2) + 1))
-        picked_disposition = [generate_random_disposition(self.size_of_the_array, self.number_of_colors)
+        picked_disposition = [generate_random_disposition(self.array_size, self.number_of_colors)
                               for _ in range(max_number_of_call_needed)]
         picked_disposition_fitness = [number_of_equals_elements(guess, self.array_to_guess)
                                       for guess in picked_disposition]
@@ -40,7 +31,7 @@ class ErdosRenyiLike:
         for i in range(pow(self.number_of_colors, self.array_size) - 1):
             is_possible_solution = True
             for id_disposition, (disposition, fitness) in enumerate(zip(picked_disposition, picked_disposition_fitness)):
-                if number_of_equals_elements(current_disposition_checked, disposition) != picked_disposition_fitness:
+                if number_of_equals_elements(current_disposition_checked, disposition) != picked_disposition_fitness[id_disposition]:
                     is_possible_solution = False
                     max_number_of_disposition_needed = max(max_number_of_disposition_needed, id_disposition + 1)
                     break
@@ -55,7 +46,8 @@ class ErdosRenyiLike:
         self.number_of_call_made = max_number_of_disposition_needed
         return max_number_of_disposition_needed
 
-    def compute_number_of_call_needed(self, array_to_guess):
-        self.set_array_to_guess(array_to_guess)
-        self.algorithm()
-        return self.number_of_call_made
+    def generate_filename_string(self):
+        return "erdosRenyiLike_array_size={}_number_of_colors={}".format(self.array_size, self.number_of_colors)
+
+    def generate_configuration_result(self):
+        return "{} {} {}".format(self.array_size, self.number_of_colors, self.number_of_call_made)
