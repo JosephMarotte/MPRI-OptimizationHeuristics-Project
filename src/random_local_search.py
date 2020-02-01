@@ -1,5 +1,5 @@
 import numpy as np
-from utils import *
+from src.utils import *
 
 
 # Random local search on the disposition to guess

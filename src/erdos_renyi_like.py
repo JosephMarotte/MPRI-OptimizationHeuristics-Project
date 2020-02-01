@@ -1,4 +1,4 @@
-from utils import generate_random_disposition, number_of_equals_elements, get_smallest_greater_disposition
+from src.utils import generate_random_disposition, number_of_equals_elements, get_smallest_greater_disposition
 from math import exp, ceil, log
 import numpy as np
 

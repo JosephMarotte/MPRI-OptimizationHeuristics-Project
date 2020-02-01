@@ -1,4 +1,4 @@
-from utils import *
+from src.utils import *
 
 
 # Random search on the disposition to guess
