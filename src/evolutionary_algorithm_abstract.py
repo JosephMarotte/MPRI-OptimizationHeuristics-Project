@@ -1,8 +1,9 @@
 import operator
 from src.utils import *
+from src.mastermind_problem import MasterMindProblemAbstract
 
 
-class EvolutionaryAlgorithm:
+class EvolutionaryAlgorithm(MasterMindProblemAbstract):
     array_to_guess = None
     array_size = None
     number_of_call_made = None
@@ -15,14 +16,9 @@ class EvolutionaryAlgorithm:
     offspring_fitness = None
 
     def __init__(self, array_size, number_of_colors, population_size, offspring_size):
-        self.array_size = array_size
-        self.number_of_colors = number_of_colors
+        super().__init__(array_size, number_of_colors)
         self.population_size = population_size
         self.offspring_size = offspring_size
-
-    def set_array_to_guess(self, array_to_guess):
-        self.number_of_call_made = 0
-        self.array_to_guess = array_to_guess
 
     def generate_initial_population(self):
         population = [generate_random_disposition(self.array_size, self.number_of_colors) for _ in range(self.population_size)]
@@ -60,7 +56,13 @@ class EvolutionaryAlgorithm:
     def loop_condition(self):
         return self.population[-1] == self.array_size  # compare max of population with goal
 
-    def evolutionary_algorithm(self):
+    def generate_filename_string(self):
+        raise NotImplementedError
+
+    def generate_configuration_result(self):
+        raise NotImplementedError
+
+    def algorithm(self):
         self.generate_initial_population()
         self.evaluate_fitness_population()
 

@@ -19,6 +19,15 @@ class EvolutionStrategy(EvolutionaryAlgorithm):
     def variation(self):
         self.offspring = [self.mutate_random_parent() for _ in range(self.offspring_size)]
 
+    def generate_filename_string(self):
+        return "mu_plus_lambda_evolution_strategy_mu={}_lambda={}_array_size={}_number_of_colors={}".format(self.population_size,
+                                                                                                            self.offspring_size,
+                                                                                                            self.array_size,
+                                                                                                            self.number_of_colors)
+
+    def generate_configuration_result(self):
+        return "{} {} {} {} {}".format(self.array_size, self.number_of_colors, self.population_size, self.offspring_size, self.number_of_call_made)
+
     def selection(self):
         raise NotImplementedError
 

@@ -32,6 +32,15 @@ class GeneticAlgorithm(EvolutionaryAlgorithm):
         self.crossover()
         self.mutate()
 
+    def generate_filename_string(self):
+        return "mu_plus_lambda_genetic_algorithm_mu={}_lambda={}_array_size={}_number_of_colors={}".format(self.population_size,
+                                                                                                           self.offspring_size,
+                                                                                                           self.array_size,
+                                                                                                           self.number_of_colors)
+
+    def generate_configuration_result(self):
+        return "{} {} {} {} {}".format(self.array_size, self.number_of_colors, self.population_size, self.offspring_size, self.number_of_call_made)
+
     def selection(self):
         raise NotImplementedError
 
