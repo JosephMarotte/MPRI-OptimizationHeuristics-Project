@@ -1,5 +1,5 @@
-from utils import generate_random_disposition, number_of_equals_elements, get_smallest_greater_disposition
-from mastermind_problem import MasterMindProblemAbstract
+from src.utils import generate_random_disposition, number_of_equals_elements, get_smallest_greater_disposition
+from src.mastermind_problem import MasterMindProblemAbstract
 from math import exp, ceil, log
 import numpy as np
 

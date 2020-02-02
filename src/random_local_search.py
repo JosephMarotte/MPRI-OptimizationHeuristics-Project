@@ -1,6 +1,6 @@
 import numpy as np
-from utils import *
-from mastermind_problem import MasterMindProblemAbstract
+from src.utils import *
+from src.mastermind_problem import MasterMindProblemAbstract
 
 
 # Random local search on the disposition to guess

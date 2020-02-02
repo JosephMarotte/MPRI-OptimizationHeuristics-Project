@@ -1,7 +1,7 @@
 import operator
 import numpy as np
-from utils import *
-from mastermind_problem import MasterMindProblemAbstract
+from src.utils import *
+from src.mastermind_problem import MasterMindProblemAbstract
 
 
 class EvolutionaryAlgorithm(MasterMindProblemAbstract):

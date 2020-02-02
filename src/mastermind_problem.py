@@ -1,5 +1,5 @@
 import pathlib
-from blackbox import BlackBox
+from src.blackbox import BlackBox
 
 
 class MasterMindProblemAbstract:

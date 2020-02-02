@@ -1,5 +1,5 @@
-from utils import *
-from mastermind_problem import MasterMindProblemAbstract
+from src.utils import *
+from src.mastermind_problem import MasterMindProblemAbstract
 
 
 # Random search on the disposition to guess

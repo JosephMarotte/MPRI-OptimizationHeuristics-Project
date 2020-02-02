@@ -26,7 +26,7 @@ class StepFactory:
                 l = m
             else:
                 r = m
-        return (previous_color + l + 1) % self.number_of_colors
+        return (previous_color + (l + 1) * add_or_subtract) % self.number_of_colors
 
     def __init__(self, number_of_colors, step_name):
         self.step_name = step_name
