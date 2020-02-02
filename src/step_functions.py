@@ -19,12 +19,13 @@ class StepFactory:
 
 
 def uniform_mutation_step(previous_color, number_of_colors):
-    return previous_color + np.random.randint(1, number_of_colors - 1)
+    new_color = (previous_color + np.random.randint(1, number_of_colors - 1)) % (number_of_colors - 1)
+    return new_color
 
 
 def unit_mutation_step(previous_color, number_of_colors):
     add_or_subtract = 1 if np.random.random() < 0.5 else -1
-    return (previous_color + add_or_subtract) % number_of_colors
+    return (previous_color + add_or_subtract) % (number_of_colors - 1)
 
 
 def harmonic_mutation_step(previous_color, number_of_colors, array_mutation_strength):
@@ -33,5 +34,5 @@ def harmonic_mutation_step(previous_color, number_of_colors, array_mutation_stre
     cumulative_sum = 0
     for i, p in enumerate(array_mutation_strength):
         if random_value < cumulative_sum + p:
-            return (previous_color + add_or_subtract * i) % number_of_colors
+            return (previous_color + add_or_subtract * i) % (number_of_colors - 1)
     return previous_color

@@ -1,5 +1,4 @@
 import numpy as np
-from src.step_functions import pick_new_color_uniformly
 
 
 # Generate random array to guess

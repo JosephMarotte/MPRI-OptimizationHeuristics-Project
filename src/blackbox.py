@@ -1,5 +1,5 @@
 import numpy as np
-from src.utils import generate_random_disposition
+from utils import generate_random_disposition
 
 
 class BlackBox:

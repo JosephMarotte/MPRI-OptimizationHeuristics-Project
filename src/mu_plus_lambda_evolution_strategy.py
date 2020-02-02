@@ -1,16 +1,18 @@
 import numpy as np
-from src.utils import standard_value_mutation
-from src.evolutionary_algorithm_abstract import *
+from utils import standard_value_mutation
+from evolutionary_algorithm_abstract import *
 
 
 class EvolutionStrategy(EvolutionaryAlgorithm):
     def __init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate, step_method):
         super().__init__(array_size, number_of_colors, population_size, offspring_size, mutation_rate, step_method)
+        self.offspring = None
 
     def mutate_random_parent(self):
         parent_id = np.random.randint(self.population_size)
-        np.fromiter((standard_value_mutation(x, self.number_of_colors, self.mutation_rate)
-                     for x in self.population[parent_id]), np.int)
+
+        return np.fromiter((standard_value_mutation(x, self.step_method, self.mutation_rate)
+                           for x in self.population[parent_id]), np.int)
 
     def variation(self):
         self.offspring = [self.mutate_random_parent() for _ in range(self.offspring_size)]
@@ -31,16 +33,15 @@ class EvolutionStrategy(EvolutionaryAlgorithm):
 class EvolutionStrategySelectingOffspring(EvolutionStrategy):
     def __init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate):
         assert(offspring_size >= population_size)
-        super().__init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate)
+        super().__init__(array_size, number_of_colors, population_size, offspring_size, mutation_rate)
 
     def selection(self):
         self.comma_selection()
 
 
 class EvolutionStrategySelectingPopulationAndOffspring(EvolutionStrategy):
-    def __init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate):
-        assert(offspring_size >= population_size)
-        super().__init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate)
+    def __init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate, step_method):
+        super().__init__(array_size, number_of_colors, population_size, offspring_size, mutation_rate, step_method)
 
     def selection(self):
         self.elitist_selection()

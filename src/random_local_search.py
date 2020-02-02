@@ -1,6 +1,6 @@
 import numpy as np
-from src.utils import *
-from src.mastermind_problem import MasterMindProblemAbstract
+from utils import *
+from mastermind_problem import MasterMindProblemAbstract
 
 
 # Random local search on the disposition to guess
@@ -11,7 +11,6 @@ class RandomLocalSearch(MasterMindProblemAbstract):
         self.step_method = step_method
 
     def random_local_search(self):
-        self.number_of_call_made += 1
         guess = generate_random_disposition(self.array_size, self.number_of_colors)
         current_number_of_equals_elements = self.black_box.evaluate(guess)
         while current_number_of_equals_elements != self.array_size:
@@ -33,4 +32,4 @@ class RandomLocalSearch(MasterMindProblemAbstract):
         return "randomLocalSearch_array_size={}_number_of_colors={}".format(self.array_size, self.number_of_colors)
 
     def generate_configuration_result(self):
-        return "{} {} {}".format(self.array_size, self.number_of_colors, self.number_of_call_made)
+        return "{} {} {}".format(self.array_size, self.number_of_colors, self.black_box.number_of_call_made)
