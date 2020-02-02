@@ -11,17 +11,16 @@ class RandomLocalSearch(MasterMindProblemAbstract):
         self.step_method = step_method
 
     def random_local_search(self):
-        self.number_of_call_made += 1
         guess = generate_random_disposition(self.array_size, self.number_of_colors)
         current_number_of_equals_elements = self.black_box.evaluate(guess)
         while current_number_of_equals_elements != self.array_size:
             id_to_modify = np.random.randint(self.array_size)
 
             old_color = guess[id_to_modify]
-            guess[id_to_modify] = self.step_method(old_color)
+            guess[id_to_modify] = self.step_method.step_function(old_color)
 
             new_current_number_of_equals_elements = self.black_box.evaluate(guess)
-            if new_current_number_of_equals_elements > current_number_of_equals_elements:
+            if new_current_number_of_equals_elements >= current_number_of_equals_elements:
                 current_number_of_equals_elements = new_current_number_of_equals_elements
             else:
                 guess[id_to_modify] = old_color
@@ -30,7 +29,7 @@ class RandomLocalSearch(MasterMindProblemAbstract):
         self.random_local_search()
 
     def generate_filename_string(self):
-        return "randomLocalSearch_array_size={}_number_of_colors={}".format(self.array_size, self.number_of_colors)
+        return "RLS_{}_n={}".format(self.step_method.step_name, self.array_size)
 
     def generate_configuration_result(self):
-        return "{} {} {}".format(self.array_size, self.number_of_colors, self.number_of_call_made)
+        return "{} {} {}".format(self.array_size, self.number_of_colors, self.black_box.number_of_call_made)

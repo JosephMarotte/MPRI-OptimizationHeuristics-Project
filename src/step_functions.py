@@ -6,32 +6,45 @@ HARMONIC_MUTATION = "harmonic_mutation"
 
 
 class StepFactory:
-    @staticmethod
-    def build_step(number_of_colors, step_name, array_mutation_strength):
+    def uniform_mutation_step(self, previous_color):
+        return (previous_color + np.random.randint(1, self.number_of_colors)) % self.number_of_colors
+
+    
+    def unit_mutation_step(self, previous_color):
+        add_or_subtract = 1 if np.random.random() < 0.5 else -1
+        return (previous_color + add_or_subtract) % self.number_of_colors
+
+
+    def harmonic_mutation_step(self, previous_color):
+        add_or_subtract = 1 if np.random.random() < 0.5 else -1
+        random_value = np.random.random()
+        l, r = 0, self.number_of_colors - 1
+        # [l, r)
+        while l < r - 1:
+            m = (l + r) // 2
+            if self.cumulative[m] <= random_value:
+                l = m
+            else:
+                r = m
+        return (previous_color + l + 1) % self.number_of_colors
+
+    def __init__(self, number_of_colors, step_name):
+        self.step_name = step_name
+        self.number_of_colors = number_of_colors
         if step_name == UNIFORM_MUTATION:
-            return lambda x: uniform_mutation_step(x, number_of_colors)
+            self.step_function = self.uniform_mutation_step
         elif step_name == UNIT_MUTATION:
-            return lambda x: unit_mutation_step(x, number_of_colors)
+            self.step_function = self.unit_mutation_step
         elif step_name == HARMONIC_MUTATION:
-            return lambda x: harmonic_mutation_step(x, number_of_colors, array_mutation_strength)
+            self.step_function = self.harmonic_mutation_step
+            self.cumulative = [0] * number_of_colors
+            harmonic = 0
+            for i in range(1, number_of_colors):
+                harmonic += 1 / i
+            for i in range(1, number_of_colors):
+                self.cumulative[i] = self.cumulative[i - 1] + 1 / i / harmonic
         else:
-            raise Exception
+            self.step_function = Exception
 
 
-def uniform_mutation_step(previous_color, number_of_colors):
-    return previous_color + np.random.randint(1, number_of_colors - 1)
 
-
-def unit_mutation_step(previous_color, number_of_colors):
-    add_or_subtract = 1 if np.random.random() < 0.5 else -1
-    return (previous_color + add_or_subtract) % number_of_colors
-
-
-def harmonic_mutation_step(previous_color, number_of_colors, array_mutation_strength):
-    add_or_subtract = 1 if np.random.random() < 0.5 else -1
-    random_value = np.random.random()
-    cumulative_sum = 0
-    for i, p in enumerate(array_mutation_strength):
-        if random_value < cumulative_sum + p:
-            return (previous_color + add_or_subtract * i) % number_of_colors
-    return previous_color

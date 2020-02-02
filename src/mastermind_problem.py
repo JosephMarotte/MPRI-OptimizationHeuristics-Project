@@ -29,7 +29,7 @@ class MasterMindProblemAbstract:
 
     def test_performance(self, number_of_iterations, filename=None):
         if filename is None:
-            path_to_result_dir = str(pathlib.Path(__file__).parent.absolute()) + "/results/"
+            path_to_result_dir = str(pathlib.Path(__file__).parent.absolute()) + "/../results/"
             pathlib.Path(path_to_result_dir).mkdir(parents=True, exist_ok=True)
             filename = path_to_result_dir + self.generate_filename_string()
         with open(filename, 'w') as file:
