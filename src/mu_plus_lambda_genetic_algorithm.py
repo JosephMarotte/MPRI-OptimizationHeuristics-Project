@@ -1,6 +1,6 @@
 import numpy as np
-from src.utils import standard_value_mutation
-from src.evolutionary_algorithm_abstract import *
+from utils import standard_value_mutation
+from evolutionary_algorithm_abstract import *
 
 
 class GeneticAlgorithm(EvolutionaryAlgorithm):

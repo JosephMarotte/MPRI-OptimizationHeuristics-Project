@@ -1,6 +1,7 @@
 import operator
-from src.utils import *
-from src.mastermind_problem import MasterMindProblemAbstract
+import numpy as np
+from utils import *
+from mastermind_problem import MasterMindProblemAbstract
 
 
 class EvolutionaryAlgorithm(MasterMindProblemAbstract):
@@ -26,7 +27,7 @@ class EvolutionaryAlgorithm(MasterMindProblemAbstract):
         self.mutation_rate = mutation_rate
 
     def generate_initial_population(self):
-        population = [generate_random_disposition(self.array_size, self.number_of_colors) for _ in range(self.population_size)]
+        self.population = [generate_random_disposition(self.array_size, self.number_of_colors) for _ in range(self.population_size)]
 
     def variation(self):
         raise NotImplementedError
@@ -43,22 +44,24 @@ class EvolutionaryAlgorithm(MasterMindProblemAbstract):
     def comma_selection(self):
         zipped = list(zip(self.offspring_fitness, self.offspring))
         zipped = sorted(zipped, key=operator.itemgetter(1))
-        zipped = zipped[:-self.population_size]
+        zipped = zipped[-self.population_size:]
         self.population_fitness, self.population = zip(*zipped)  # unzip
 
     def elitist_selection(self):
-        fitness = np.concatenate(self.offspring_fitness, self.population_fitness)
-        population = np.concatenate(self.offspring, self.population)
+        self.offspring_fitness = np.array(self.offspring_fitness)
+        self.population_fitness = np.array(self.population_fitness)
+        fitness = np.concatenate((self.offspring_fitness, self.population_fitness))
+        population = np.concatenate((self.offspring, self.population))
         zipped = list(zip(fitness, population))
-        zipped = sorted(zipped, key=operator.itemgetter(1))
-        zipped = zipped[:-self.population_size]
+        zipped = sorted(zipped, key=operator.itemgetter(0))
+        zipped = zipped[-self.population_size:]
         self.population_fitness, self.population = zip(*zipped)  # unzip
 
     def selection(self):
         raise NotImplementedError
 
     def loop_condition(self):
-        return self.population[-1] == self.array_size  # compare max of population with goal
+        return self.population_fitness[-1] < self.array_size  # compare max of population with goal
 
     def generate_filename_string(self):
         raise NotImplementedError
@@ -71,6 +74,6 @@ class EvolutionaryAlgorithm(MasterMindProblemAbstract):
         self.evaluate_fitness_population()
 
         while self.loop_condition():
-            self.offspring = self.variation()
+            self.variation()
             self.evaluate_fitness_offspring()
             self.selection()

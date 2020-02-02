@@ -1,6 +1,5 @@
 import pathlib
-from src.utils import generate_random_disposition
-from src.blackbox import BlackBox
+from blackbox import BlackBox
 
 
 class MasterMindProblemAbstract:

@@ -1,6 +1,6 @@
 import numpy as np
-from src.utils import number_of_equals_elements, get_smallest_greater_disposition, generate_random_disposition
-from src.mastermind_problem import MasterMindProblemAbstract
+from utils import number_of_equals_elements, get_smallest_greater_disposition, generate_random_disposition
+from mastermind_problem import MasterMindProblemAbstract
 
 
 # Exhaustive search on the array_to_guess

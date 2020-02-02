@@ -46,5 +46,3 @@ class StepFactory:
         else:
             self.step_function = Exception
 
-
-
