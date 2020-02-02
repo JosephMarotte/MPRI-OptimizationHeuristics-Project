@@ -6,7 +6,6 @@ from src.mastermind_problem import MasterMindProblemAbstract
 class EvolutionaryAlgorithm(MasterMindProblemAbstract):
     array_to_guess = None
     array_size = None
-    number_of_call_made = None
     number_of_colors = None
     population_size = None
     offspring_size = None
@@ -32,9 +31,8 @@ class EvolutionaryAlgorithm(MasterMindProblemAbstract):
     def variation(self):
         raise NotImplementedError
 
-    def evaluate_fitness(self, array_to_evaluate):
-        self.number_of_call_made += len(array_to_evaluate)
-        return np.fromiter((number_of_equals_elements(x, self.array_to_guess) for x in array_to_evaluate), np.int)
+    def evaluate_fitness(self, dispositions_to_evaluate):
+        return np.fromiter((self.black_box.evaluate(disposition) for disposition in dispositions_to_evaluate), np.int)
 
     def evaluate_fitness_population(self):
         self.population_fitness = self.evaluate_fitness(self.population)

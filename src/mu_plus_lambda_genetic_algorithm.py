@@ -36,25 +36,25 @@ class GeneticAlgorithm(EvolutionaryAlgorithm):
                                                                                                            self.number_of_colors)
 
     def generate_configuration_result(self):
-        return "{} {} {} {} {}".format(self.array_size, self.number_of_colors, self.population_size, self.offspring_size, self.number_of_call_made)
+        return "{} {} {} {} {}".format(self.array_size, self.number_of_colors, self.population_size, self.offspring_size, self.black_box.number_of_call_made)
 
     def selection(self):
         raise NotImplementedError
 
 
 class GeneticAlgorithmSelectingOffspring(GeneticAlgorithm):
-    def __init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate):
+    def __init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate, k_parents):
         assert(offspring_size >= population_size)
-        super().__init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate)
+        super().__init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate, k_parents)
 
     def selection(self):
         self.comma_selection()
 
 
 class GeneticAlgorithmSelectingPopulationAndOffspring(GeneticAlgorithm):
-    def __init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate):
+    def __init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate, k_parents):
         assert(offspring_size >= population_size)
-        super().__init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate)
+        super().__init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate, k_parents)
 
     def selection(self):
         self.elitist_selection()

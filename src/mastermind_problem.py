@@ -1,28 +1,21 @@
 import pathlib
 from src.utils import generate_random_disposition
+from src.blackbox import BlackBox
 
 
 class MasterMindProblemAbstract:
     array_size = None
     number_of_colors = None
 
-    array_to_guess = None
-    number_of_call_made = None
+    black_box = None
 
     def __init__(self, array_size, number_of_colors):
         self.array_size = array_size
         self.number_of_colors = number_of_colors
-
-    def set_array_to_guess(self, array_to_guess):
-        assert(max(array_to_guess) < self.number_of_colors)
-        self.array_size = len(array_to_guess)
-        self.number_of_call_made = 0
-        self.array_to_guess = array_to_guess
+        self.black_box = BlackBox(array_size, number_of_colors)
 
     def solve(self, array_to_guess=None):
-        if array_to_guess is None:
-            array_to_guess = generate_random_disposition(self.array_size, self.number_of_colors)
-        self.set_array_to_guess(array_to_guess)
+        self.black_box.new_session(array_to_guess)
         self.algorithm()
 
     def algorithm(self):

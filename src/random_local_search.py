@@ -13,15 +13,14 @@ class RandomLocalSearch(MasterMindProblemAbstract):
     def random_local_search(self):
         self.number_of_call_made += 1
         guess = generate_random_disposition(self.array_size, self.number_of_colors)
-        current_number_of_equals_elements = number_of_equals_elements(guess, self.array_to_guess)
+        current_number_of_equals_elements = self.black_box.evaluate(guess)
         while current_number_of_equals_elements != self.array_size:
-            self.number_of_call_made += 1
             id_to_modify = np.random.randint(self.array_size)
 
             old_color = guess[id_to_modify]
             guess[id_to_modify] = self.step_method(old_color)
 
-            new_current_number_of_equals_elements = number_of_equals_elements(guess, self.array_to_guess)
+            new_current_number_of_equals_elements = self.black_box.evaluate(guess)
             if new_current_number_of_equals_elements > current_number_of_equals_elements:
                 current_number_of_equals_elements = new_current_number_of_equals_elements
             else:

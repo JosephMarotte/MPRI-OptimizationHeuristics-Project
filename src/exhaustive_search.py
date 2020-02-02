@@ -11,9 +11,7 @@ class ExhaustiveSearch(MasterMindProblemAbstract):
 
     def exhaustive_search(self):
         guess = np.zeros(self.array_size)
-        self.number_of_call_made = 1
-        while number_of_equals_elements(guess, self.array_to_guess) != self.array_size:
-            self.number_of_call_made += 1
+        while self.black_box.evaluate(guess) != self.black_box.max_possible_evaluation:
             guess = get_smallest_greater_disposition(guess, self.number_of_colors)
 
     def algorithm(self):
@@ -23,4 +21,4 @@ class ExhaustiveSearch(MasterMindProblemAbstract):
         return "exhaustiveSearch_array_size={}_number_of_colors={}".format(self.array_size, self.number_of_colors)
 
     def generate_configuration_result(self):
-        return "{} {} {}".format(self.array_size, self.number_of_colors, self.number_of_call_made)
+        return "{} {} {}".format(self.array_size, self.number_of_colors, self.black_box.number_of_call_made)

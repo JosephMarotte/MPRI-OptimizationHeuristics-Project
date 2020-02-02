@@ -22,7 +22,7 @@ class EvolutionStrategy(EvolutionaryAlgorithm):
                                                                                                             self.number_of_colors)
 
     def generate_configuration_result(self):
-        return "{} {} {} {} {}".format(self.array_size, self.number_of_colors, self.population_size, self.offspring_size, self.number_of_call_made)
+        return "{} {} {} {} {}".format(self.array_size, self.number_of_colors, self.population_size, self.offspring_size, self.black_box.number_of_call_made)
 
     def selection(self):
         raise NotImplementedError

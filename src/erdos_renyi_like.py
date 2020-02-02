@@ -21,7 +21,7 @@ class ErdosRenyiLike(MasterMindProblemAbstract):
         max_number_of_call_needed = ceil(2 * exp(1) * self.array_size * (log(self.array_size, 2) + 1))
         picked_disposition = [generate_random_disposition(self.array_size, self.number_of_colors)
                               for _ in range(max_number_of_call_needed)]
-        picked_disposition_fitness = [number_of_equals_elements(guess, self.array_to_guess)
+        picked_disposition_fitness = [number_of_equals_elements(guess, self.black_box.array_to_guess)
                                       for guess in picked_disposition]
 
         possible_answers = []
@@ -43,11 +43,11 @@ class ErdosRenyiLike(MasterMindProblemAbstract):
         if len(possible_answers) != 1:
             raise ErdosRenyiHasMultipleSolution
 
-        self.number_of_call_made = max_number_of_disposition_needed
+        self.black_box.number_of_call_made = max_number_of_disposition_needed
         return max_number_of_disposition_needed
 
     def generate_filename_string(self):
         return "erdosRenyiLike_array_size={}_number_of_colors={}".format(self.array_size, self.number_of_colors)
 
     def generate_configuration_result(self):
-        return "{} {} {}".format(self.array_size, self.number_of_colors, self.number_of_call_made)
+        return "{} {} {}".format(self.array_size, self.number_of_colors, self.black_box.number_of_call_made)
