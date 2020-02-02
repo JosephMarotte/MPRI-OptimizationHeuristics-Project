@@ -6,8 +6,9 @@ from src.mastermind_problem import MasterMindProblemAbstract
 # Random local search on the disposition to guess
 # Returns the number of calls to number_of_equals_elements made
 class RandomLocalSearch(MasterMindProblemAbstract):
-    def __init__(self, array_size, number_of_colors):
+    def __init__(self, array_size, number_of_colors, step_method):
         super().__init__(array_size, number_of_colors)
+        self.step_method = step_method
 
     def random_local_search(self):
         self.number_of_call_made += 1
@@ -16,11 +17,9 @@ class RandomLocalSearch(MasterMindProblemAbstract):
         while current_number_of_equals_elements != self.array_size:
             self.number_of_call_made += 1
             id_to_modify = np.random.randint(self.array_size)
+
             old_color = guess[id_to_modify]
-            new_color = np.random.randint(self.number_of_colors)
-            while new_color == old_color:
-                new_color = np.random.randint(self.number_of_colors)
-            guess[id_to_modify] = new_color
+            guess[id_to_modify] = self.step_method(old_color)
 
             new_current_number_of_equals_elements = number_of_equals_elements(guess, self.array_to_guess)
             if new_current_number_of_equals_elements > current_number_of_equals_elements:

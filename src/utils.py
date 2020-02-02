@@ -1,4 +1,5 @@
 import numpy as np
+from src.step_functions import pick_new_color_uniformly
 
 
 # Generate random array to guess
@@ -13,12 +14,9 @@ def number_of_equals_elements(guess, array_to_guess):
 
 
 # Mutate a color given a mutation rate and the number of colors
-def standard_value_mutation(previous_color, number_of_colors, mutation_rate):
+def standard_value_mutation(previous_color, step_method, mutation_rate):
     if np.random.random() <= mutation_rate:
-        new_color = np.random.randint(0, number_of_colors)
-        while new_color == previous_color:
-            new_color = np.random.randint(0, number_of_colors)
-        return new_color
+        return step_method(previous_color)
     return previous_color
 
 

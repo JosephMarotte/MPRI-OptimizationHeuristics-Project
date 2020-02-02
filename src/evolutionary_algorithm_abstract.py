@@ -14,11 +14,17 @@ class EvolutionaryAlgorithm(MasterMindProblemAbstract):
     population_fitness = None
     offspring = None
     offspring_fitness = None
+    step_method = None
+    mutation_rate = None
 
-    def __init__(self, array_size, number_of_colors, population_size, offspring_size):
+    def __init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate, step_method):
         super().__init__(array_size, number_of_colors)
+        assert (mutation_rate < 1)
+        assert (mutation_rate > 0)
         self.population_size = population_size
         self.offspring_size = offspring_size
+        self.step_method = step_method
+        self.mutation_rate = mutation_rate
 
     def generate_initial_population(self):
         population = [generate_random_disposition(self.array_size, self.number_of_colors) for _ in range(self.population_size)]
