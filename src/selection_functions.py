@@ -27,10 +27,10 @@ class SelectionFactory:
         fitness = np.concatenate((evolution_algorithm.offspring_fitness, evolution_algorithm.population_fitness))
         population = np.concatenate((evolution_algorithm.offspring, evolution_algorithm.population))
         zipped = list(zip(fitness, population))
-        zipped = sorted(zipped, key=operator.itemgetter(0))
         # we need to shuffle the array to not always take the element from population in case the fitness was improved
+        np.random.shuffle(zipped)
+        zipped = sorted(zipped, key=operator.itemgetter(0))
         fitness_threshold = zipped[-evolution_algorithm.population_size][0]
         zipped = list(filter(lambda t: t[0] >= fitness_threshold, zipped))
-        np.random.shuffle(zipped)
         zipped = zipped[-evolution_algorithm.population_size:]
         return zip(*zipped)  # unzip
