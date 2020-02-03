@@ -58,11 +58,6 @@ class EvolutionaryAlgorithm(MasterMindProblemAbstract):
         self.generate_initial_population()
         self.evaluate_fitness_population()
 
-        self.black_box.disposition = np.array([4, 3, 3, 4, 2])
-        self.population = [np.array([4, 2, 4, 3, 0])]
-        self.evaluate_fitness_population()
-
-        # for i in range(1):
         while self.loop_condition():
             self.variation()
             self.evaluate_fitness_offspring()
