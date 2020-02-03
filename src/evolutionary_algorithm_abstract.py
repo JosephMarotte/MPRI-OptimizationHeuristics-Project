@@ -43,7 +43,7 @@ class EvolutionaryAlgorithm(MasterMindProblemAbstract):
         self.offspring_fitness = self.evaluate_fitness(self.offspring)
 
     def selection(self):
-        self.selection_method.selection_function(self)
+        self.population_fitness, self.population = self.selection_method.selection_function(self)
 
     def loop_condition(self):
         return self.population_fitness[-1] < self.array_size  # compare max of population with goal
@@ -58,6 +58,11 @@ class EvolutionaryAlgorithm(MasterMindProblemAbstract):
         self.generate_initial_population()
         self.evaluate_fitness_population()
 
+        self.black_box.disposition = np.array([4, 3, 3, 4, 2])
+        self.population = [np.array([4, 2, 4, 3, 0])]
+        self.evaluate_fitness_population()
+
+        # for i in range(1):
         while self.loop_condition():
             self.variation()
             self.evaluate_fitness_offspring()
