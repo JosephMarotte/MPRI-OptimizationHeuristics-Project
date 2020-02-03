@@ -26,12 +26,14 @@ class MasterMindProblemAbstract:
     def generate_configuration_result(self):
         raise NotImplementedError
 
-    def test_performance(self, number_of_iterations, filename=None):
+    def test_performance(self, number_of_iterations, filename=None, open_mode=None):
         if filename is None:
-            path_to_result_dir = str(pathlib.Path(__file__).parent.absolute()) + "/../results/"
+            path_to_result_dir = str(pathlib.Path(__file__).parent.parent.absolute()) + "/results/"
             pathlib.Path(path_to_result_dir).mkdir(parents=True, exist_ok=True)
             filename = path_to_result_dir + self.generate_filename_string()
-        with open(filename, 'w') as file:
+        if open_mode is None:
+            open_mode = 'w'
+        with open(filename, open_mode) as file:
             for i in range(number_of_iterations):
                 self.solve()
                 self.store_result(file)
