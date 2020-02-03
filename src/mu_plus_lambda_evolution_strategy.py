@@ -4,8 +4,8 @@ from src.evolutionary_algorithm_abstract import *
 
 
 class EvolutionStrategy(EvolutionaryAlgorithm):
-    def __init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate, step_method):
-        super().__init__(array_size, number_of_colors, population_size, offspring_size, mutation_rate, step_method)
+    def __init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate, step_method, selection_method):
+        super().__init__(array_size, number_of_colors, population_size, offspring_size, mutation_rate, step_method, selection_method)
         self.offspring = None
 
     def mutate_random_parent(self):
@@ -25,23 +25,3 @@ class EvolutionStrategy(EvolutionaryAlgorithm):
 
     def generate_configuration_result(self):
         return "{} {} {} {} {}".format(self.array_size, self.number_of_colors, self.population_size, self.offspring_size, self.black_box.number_of_call_made)
-
-    def selection(self):
-        raise NotImplementedError
-
-
-class EvolutionStrategySelectingOffspring(EvolutionStrategy):
-    def __init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate):
-        assert(offspring_size >= population_size)
-        super().__init__(array_size, number_of_colors, population_size, offspring_size, mutation_rate)
-
-    def selection(self):
-        self.comma_selection()
-
-
-class EvolutionStrategySelectingPopulationAndOffspring(EvolutionStrategy):
-    def __init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate, step_method):
-        super().__init__(array_size, number_of_colors, population_size, offspring_size, mutation_rate, step_method)
-
-    def selection(self):
-        self.elitist_selection()

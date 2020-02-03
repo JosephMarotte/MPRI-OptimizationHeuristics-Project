@@ -5,8 +5,8 @@ from math import ceil
 
 
 class GeneticAlgorithm(EvolutionaryAlgorithm):
-    def __init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate, crossover_probability, update_strength, step_method):
-        super().__init__(array_size, number_of_colors, population_size, offspring_size, mutation_rate, step_method)
+    def __init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate, crossover_probability, update_strength, step_method, selection_method):
+        super().__init__(array_size, number_of_colors, population_size, offspring_size, mutation_rate, step_method, selection_method)
         self.crossover_probability = crossover_probability
         self.update_strength = update_strength
 
@@ -34,7 +34,7 @@ class GeneticAlgorithm(EvolutionaryAlgorithm):
 
     def selection(self):
         old_population_fitness = self.population_fitness[0]
-        self.elitist_selection()
+        self.selection_method.selection_function(self)  # should be elitist function
         if self.population_fitness[0] > old_population_fitness:
             self.offspring_size = max(self.offspring_size / self.update_strength, 1)
         else:

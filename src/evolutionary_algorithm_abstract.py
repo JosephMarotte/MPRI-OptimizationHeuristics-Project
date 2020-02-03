@@ -17,13 +17,14 @@ class EvolutionaryAlgorithm(MasterMindProblemAbstract):
     step_method = None
     mutation_rate = None
 
-    def __init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate, step_method):
+    def __init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate, step_method, selection_method):
         super().__init__(array_size, number_of_colors)
         assert (mutation_rate < 1)
         assert (mutation_rate > 0)
         self.population_size = population_size
         self.offspring_size = offspring_size
         self.step_method = step_method
+        self.selection_method = selection_method
         self.mutation_rate = mutation_rate
 
     def generate_initial_population(self):
@@ -41,28 +42,8 @@ class EvolutionaryAlgorithm(MasterMindProblemAbstract):
     def evaluate_fitness_offspring(self):
         self.offspring_fitness = self.evaluate_fitness(self.offspring)
 
-    def comma_selection(self):
-        zipped = list(zip(self.offspring_fitness, self.offspring))
-        zipped = sorted(zipped, key=operator.itemgetter(1))
-        zipped = zipped[-self.population_size:]
-        self.population_fitness, self.population = zip(*zipped)  # unzip
-
-    def elitist_selection(self):
-        self.offspring_fitness = np.array(self.offspring_fitness)
-        self.population_fitness = np.array(self.population_fitness)
-        fitness = np.concatenate((self.offspring_fitness, self.population_fitness))
-        population = np.concatenate((self.offspring, self.population))
-        zipped = list(zip(fitness, population))
-        zipped = sorted(zipped, key=operator.itemgetter(0))
-        # we need to shuffle the array to not always take the element from population in case the fitness was improved
-        fitness_threshold = zipped[-10][0]
-        zipped = list(filter(lambda t: t[0] >= fitness_threshold, zipped))
-        np.random.shuffle(zipped)
-        zipped = zipped[-self.population_size:]
-        self.population_fitness, self.population = zip(*zipped)  # unzip
-
     def selection(self):
-        raise NotImplementedError
+        self.selection_method.selection_function(self)
 
     def loop_condition(self):
         return self.population_fitness[-1] < self.array_size  # compare max of population with goal

@@ -9,11 +9,9 @@ class StepFactory:
     def uniform_mutation_step(self, previous_color):
         return (previous_color + np.random.randint(1, self.number_of_colors)) % self.number_of_colors
 
-    
     def unit_mutation_step(self, previous_color):
         add_or_subtract = 1 if np.random.random() < 0.5 else -1
         return (previous_color + add_or_subtract) % self.number_of_colors
-
 
     def harmonic_mutation_step(self, previous_color):
         add_or_subtract = 1 if np.random.random() < 0.5 else -1
