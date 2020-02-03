@@ -20,7 +20,7 @@ class GeneticAlgorithm(EvolutionaryAlgorithm):
         self.offspring = [self.crossover_single_offspring() for _ in range(self.offspring_size)]
 
     def mutate_single_offspring(self, offspring):
-        return np.fromiter((standard_value_mutation(x, self.step_method, self.mutation_rate) for x in offspring), np.int)
+        return np.fromiter((standard_value_mutation(x, self.step_method.step_function, self.mutation_rate) for x in offspring), np.int)
 
     def mutate(self):
         self.offspring = [self.mutate_single_offspring(offspring) for offspring in self.offspring]

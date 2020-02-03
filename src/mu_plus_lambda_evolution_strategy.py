@@ -11,7 +11,7 @@ class EvolutionStrategy(EvolutionaryAlgorithm):
     def mutate_random_parent(self):
         parent_id = np.random.randint(self.population_size)
 
-        return np.fromiter((standard_value_mutation(x, self.step_method, self.mutation_rate)
+        return np.fromiter((standard_value_mutation(x, self.step_method.step_function, self.mutation_rate)
                            for x in self.population[parent_id]), np.int)
 
     def variation(self):
