@@ -3,7 +3,7 @@ from src.erdos_renyi_like import ErdosRenyiLike
 
 
 def retrieve_value_erdos_renyi(number_of_colors):
-    path_to_result_dir = str(pathlib.Path(__file__).parent.parent.absolute()) + "/results/" + "erdos_renyi"
+    path_to_result_dir = str(pathlib.Path(__file__).parent.parent.absolute()) + "/results/" + "erdos_renyi.csv"
 
     for nb_of_color in number_of_colors:
         alg = ErdosRenyiLike(nb_of_color, nb_of_color)

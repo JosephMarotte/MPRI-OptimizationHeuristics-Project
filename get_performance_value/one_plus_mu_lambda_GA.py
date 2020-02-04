@@ -5,7 +5,7 @@ from src.selection_functions import SelectionFactory, ELITIST_SELECTION
 
 
 def retrieve_value_one_plus_mu_lambda_ga(lambd, number_of_colors):
-    path_to_result_dir = str(pathlib.Path(__file__).parent.parent.absolute()) + "/results/" + "GA_1_plus_mu_lambda"
+    path_to_result_dir = str(pathlib.Path(__file__).parent.parent.absolute()) + "/results/" + "GA_1_plus_mu_lambda.csv"
 
     for nb_of_color in number_of_colors:
         step_method = StepFactory(nb_of_color, UNIFORM_MUTATION)
@@ -16,7 +16,7 @@ def retrieve_value_one_plus_mu_lambda_ga(lambd, number_of_colors):
 
 
 def retrieve_value_one_plus_mu_lambda_adaptive_ga(initial_lambda, update_strength, number_of_colors):
-    path_to_result_dir = str(pathlib.Path(__file__).parent.parent.absolute()) + "/results/" + "GA_1_plus_mu_lambda_adaptive"
+    path_to_result_dir = str(pathlib.Path(__file__).parent.parent.absolute()) + "/results/" + "GA_1_plus_mu_lambda_adaptive.csv"
     for nb_of_color in number_of_colors:
         step_method = StepFactory(nb_of_color, UNIFORM_MUTATION)
         selection_method = SelectionFactory(ELITIST_SELECTION)

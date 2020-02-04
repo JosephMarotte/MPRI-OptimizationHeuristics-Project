@@ -1,11 +1,13 @@
 from mu_plus_lambda_EA import retrieve_value_one_plus_one_ea
 from mu_plus_lambda_GA import retrieve_value_mu_plus_lambda_ga
 from one_plus_mu_lambda_GA import retrieve_value_one_plus_mu_lambda_adaptive_ga, retrieve_value_one_plus_mu_lambda_ga
+from random_local_search import retrieve_value_random_local_search
 from exhaustive_search import retrieve_value_exhaustive_search
 from erdos_renyi import retrieve_value_erdos_renyi
 
 number_of_colors = [pow(2, i) for i in range(9)]
 
+retrieve_value_random_local_search(number_of_colors)
 retrieve_value_one_plus_one_ea(number_of_colors)
 retrieve_value_mu_plus_lambda_ga(2, 1, 2, number_of_colors)
 retrieve_value_mu_plus_lambda_ga(10, 6, 5, number_of_colors)

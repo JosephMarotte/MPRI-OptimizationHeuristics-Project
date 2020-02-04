@@ -5,7 +5,7 @@ from src.selection_functions import SelectionFactory, ELITIST_SELECTION
 
 
 def retrieve_value_one_plus_one_ea(number_of_colors):
-    path_to_result_dir = str(pathlib.Path(__file__).parent.parent.absolute()) + "/results/" + "EA_mu_lambda"
+    path_to_result_dir = str(pathlib.Path(__file__).parent.parent.absolute()) + "/results/" + "EA_mu_lambda.csv"
 
     for nb_of_color in number_of_colors:
         step_method = StepFactory(nb_of_color, UNIFORM_MUTATION)
