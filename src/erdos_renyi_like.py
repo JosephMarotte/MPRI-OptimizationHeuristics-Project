@@ -17,18 +17,18 @@ class ErdosRenyiLike(MasterMindProblemAbstract):
         super().__init__(array_size, number_of_colors)
 
     def algorithm(self):
-        assert (self.array_to_guess is not None)
+        assert (self.black_box.disposition is not None)
         max_number_of_call_needed = ceil(2 * exp(1) * self.array_size * (log(self.array_size, 2) + 1))
         picked_disposition = [generate_random_disposition(self.array_size, self.number_of_colors)
                               for _ in range(max_number_of_call_needed)]
-        picked_disposition_fitness = [number_of_equals_elements(guess, self.black_box.array_to_guess)
+        picked_disposition_fitness = [number_of_equals_elements(guess, self.black_box.disposition)
                                       for guess in picked_disposition]
 
         possible_answers = []
         max_number_of_disposition_needed = 0
 
         current_disposition_checked = np.zeros(self.array_size)
-        for i in range(pow(self.number_of_colors, self.array_size) - 1):
+        for i in range(pow(self.number_of_colors, self.array_size)):
             is_possible_solution = True
             for id_disposition, (disposition, fitness) in enumerate(zip(picked_disposition, picked_disposition_fitness)):
                 if number_of_equals_elements(current_disposition_checked, disposition) != picked_disposition_fitness[id_disposition]:

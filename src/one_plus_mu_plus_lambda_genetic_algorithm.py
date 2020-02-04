@@ -4,11 +4,10 @@ from src.evolutionary_algorithm_abstract import *
 from math import ceil
 
 
-class GeneticAlgorithmAdaptive(EvolutionaryAlgorithm):
-    def __init__(self, array_size, number_of_colors, population_size, offspring_size, update_strength, step_method, selection_method):
-        super().__init__(array_size, number_of_colors, 1, offspring_size, offspring_size / array_size, step_method, selection_method)
-        self.crossover_probability = 1 / offspring_size
-        self.update_strength = update_strength
+class GeneticAlgorithm(EvolutionaryAlgorithm):
+    def __init__(self, array_size, number_of_colors, offspring_size, mutation_rate, crossover_probability, step_method, selection_method):
+        super().__init__(array_size, number_of_colors, 1, offspring_size, mutation_rate, step_method, selection_method)
+        self.crossover_probability = crossover_probability
 
     def mutate_disposition(self, disposition):
         return np.fromiter((standard_value_mutation(x, self.step_method.step_function, self.mutation_rate)
@@ -32,8 +31,37 @@ class GeneticAlgorithmAdaptive(EvolutionaryAlgorithm):
         self.crossover()
 
     def selection(self):
+        self.population_fitness, self.population = self.selection_method.selection_function(self)
+
+    def generate_filename_string(self):
+        return "one_plu_mu_comma_lambda_genetic_algorithm_mu={}_lambda={}_array_size={}_number_of_colors={}".format(self.population_size,
+                                                                                                                    self.offspring_size,
+                                                                                                                    self.array_size,
+                                                                                                                    self.number_of_colors)
+
+    def generate_configuration_result(self):
+        return "{} {} {} {} {} {}".format(self.array_size,
+                                          self.number_of_colors,
+                                          self.offspring_size,
+                                          self.mutation_rate,
+                                          self.crossover_probability,
+                                          self.black_box.number_of_call_made)
+
+
+class GeneticAlgorithmAdaptive(GeneticAlgorithm):
+    def __init__(self, array_size, number_of_colors, offspring_size, update_strength, step_method, selection_method):
+        super().__init__(array_size, number_of_colors, offspring_size, offspring_size / array_size, 1 / offspring_size, step_method, selection_method)
+        self.update_strength = update_strength
+
+    def variation(self):
+        self.mutate()
+        self.evaluate_fitness_offspring()
+        self.offspring = [self.offspring[np.argmax(self.offspring_fitness)]]
+        self.crossover()
+
+    def selection(self):
         old_population_fitness = self.population_fitness[0]
-        self.population_fitness, self.population = self.selection_method.selection_function(self)  # should be elitist function
+        self.population_fitness, self.population = self.selection_method.selection_function(self)
         if self.population_fitness[0] > old_population_fitness:
             self.offspring_size = max(ceil(self.offspring_size / self.update_strength), 1)
         else:
@@ -42,10 +70,10 @@ class GeneticAlgorithmAdaptive(EvolutionaryAlgorithm):
         self.crossover_probability = 1 / self.offspring_size
 
     def generate_filename_string(self):
-        return "one_plu_mu_comma_lambda_genetic_algorithm_mu={}_lambda={}_array_size={}_number_of_colors={}".format(self.population_size,
-                                                                                                                    self.offspring_size,
-                                                                                                                    self.array_size,
-                                                                                                                    self.number_of_colors)
+        return "one_plu_mu_lambda_adaptive_genetic_algorithm_mu={}_lambda={}_array_size={}_number_of_colors={}".format(self.population_size,
+                                                                                                                       self.offspring_size,
+                                                                                                                       self.array_size,
+                                                                                                                       self.number_of_colors)
 
     def generate_configuration_result(self):
         return "{} {} {} {}".format(self.array_size,

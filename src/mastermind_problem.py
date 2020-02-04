@@ -1,4 +1,5 @@
 import pathlib
+import time
 from src.blackbox import BlackBox
 
 
@@ -26,7 +27,7 @@ class MasterMindProblemAbstract:
     def generate_configuration_result(self):
         raise NotImplementedError
 
-    def test_performance(self, number_of_iterations, filename=None, open_mode=None):
+    def test_performance(self, number_of_iterations, filename=None, open_mode=None, iteration_time_limit=60):
         if filename is None:
             path_to_result_dir = str(pathlib.Path(__file__).parent.parent.absolute()) + "/results/"
             pathlib.Path(path_to_result_dir).mkdir(parents=True, exist_ok=True)
@@ -35,8 +36,13 @@ class MasterMindProblemAbstract:
             open_mode = 'w'
         with open(filename, open_mode) as file:
             for i in range(number_of_iterations):
+                initial_time = time.time()
                 self.solve()
+                total_time = time.time() - initial_time
                 self.store_result(file)
+                if total_time >= iteration_time_limit:
+                    return True
+        return False
 
     def store_result(self, file):
         file.write(self.generate_configuration_result() + '\n')
