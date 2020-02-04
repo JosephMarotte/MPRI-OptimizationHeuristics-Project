@@ -19,7 +19,7 @@ class EvolutionaryAlgorithm(MasterMindProblemAbstract):
 
     def __init__(self, array_size, number_of_colors, population_size, offspring_size, mutation_rate, step_method, selection_method):
         super().__init__(array_size, number_of_colors)
-        assert (mutation_rate < 1)
+        assert (mutation_rate <= 1)
         assert (mutation_rate > 0)
         self.population_size = population_size
         self.offspring_size = offspring_size
