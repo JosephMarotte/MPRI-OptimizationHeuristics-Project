@@ -42,9 +42,6 @@ def find_log_k(d):
         if check_precondition(d, log_k):
             last = log_k
         log_k += 1
-    #if check_precondition(d, log_k - 1):
-    #    print("IT GOES BEYOND")
-    #    exit(0)
     if last == -1:
         return log_k + 1
     print("we found one!")
@@ -69,16 +66,13 @@ def construct_detecting_matrix(d):
         b = a
         subsz = 0
         l = 0
-        print("a = ", a, "prod*d[r] = ", prod*d[r], "ub = ", ub, sep = " ")
         while r < n - k and prod * d[r] <= ub:
             if l > 0:
                 for lin in range(k):
                     M[lin][r] = M[lin][r - 1]
-            print("heloooo", r, n-k)
             while subsz < prod:
                 if hamming_weight(b) % 2 == 0:
                     cur = get_evaluations(a, b, log_k)
-                    #print("normal mode we put ", a, b, hamming_weight(b), cur, sep = " ")
                     for lin in range(k):
                         M[lin][r] += cur[lin]
                     subsz += 1
@@ -86,16 +80,13 @@ def construct_detecting_matrix(d):
             prod *= d[r]
             r += 1
             l += 1
-        print("fill ", n-k+a, sep=" ")
         cur = get_evaluations(a, l, log_k)
         if l > 0:
-            #print("WE INIT")
             for lin in range(k):
                 M[lin][n - k + a] = M[lin][r - 1]
         while subsz < prod:
             if hamming_weight(b) % 2 == 0:
                 cur = get_evaluations(a, b, log_k)
-                #print("add the function ", a, b, cur, sep = " ")
                 for lin in range(k):
                     M[lin][n - k + a] += cur[lin]
                 subsz += 1
@@ -124,7 +115,6 @@ def gen(d, cur, i = 0):
     if i >= len(d):
         tmp = tuple(comp(M, cur))
         if tmp in seen:
-            print("wooooow")
             print(tmp, cur, seen[tmp])
         seen[tmp] = cur[:]
         return
