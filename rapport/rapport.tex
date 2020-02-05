@@ -19,9 +19,9 @@
 [
 a4paper,
 left=1.5cm,
-right=2.5cm,
+right=1.5cm,
 top=1.5cm,
-bottom=2cm
+bottom=1.5cm
 ]{geometry}
 
 \usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
@@ -77,7 +77,10 @@ We implemented the following algorithms:
 \begin{itemize}
     \item Exhaustive Search
     \item Randomized Local Search
-    \item $(\mu+\lambda)$-EA, $(\mu,\lambda)$-EA
+    \item $(\mu+\lambda)$-EA, $(\mu,\lambda)$-EA\footnote{Note that for example we didn't
+        analyze $(\mu,\lambda)$-EA in practice, but it is straightforward to create new data
+        from our implementation -- we only need to change the selection method, which is a
+        parameter of our generic evolutionary implementation.}
     \item $(\mu+\lambda)$-GA, $(\mu,\lambda)$-GA
     \item $1+(\lambda,\lambda)$-GA
     \item An Erd\H{o}s-Renyi-type approach
@@ -88,7 +91,7 @@ is available on \texttt{https://github.com/JosephMarotte/MPRI-OptimizationHeuris
 
 \begin{remark}
 	We initially planned to implement the algorithm with black-box complexity
-	$O(n\log \log n)$ described in [TODO]. The main issue of this approach from
+        $O(n\log \log n)$ described in \cite{DOERR}. The main issue of this approach from
 	a testing point of view is the time complexity. Apart from the fact that $f(m)$ is not
 	explicit, there are two bottlenecks:
 
@@ -98,19 +101,28 @@ is available on \texttt{https://github.com/JosephMarotte/MPRI-OptimizationHeuris
 		\item the final Erd\H{o}s-Renyi part when $k'$ is too small
 	\end{itemize}
 
-	Note that following [TODO] the coin weighing part can be done in polynomial time. In that case, the
-	black-box complexity and the time complexity would be the same up to polynomial factors. Moreover,
-	in the analysis of [TODO] we can see that we only need $k'=\omega(\log n)$ to run the main loop. So
+        Note that following \cite{BSHOUTY} the coin weighing part can be done in polynomial time by constructing
+        explicit detecting matrices\footnote{Matrices whose corresping linear transform is injective when we restrict
+        it to the product set of the ``interesting'' integers what we need.} using Fourier analysis. In that case, the
+        black-box complexity would be $O(n\log \log n)$ and the time complexity would be the same up to
+        \textit{polynomial} factors. Moreover,
+        in the analysis of \cite{DOERR} we can see that we only need $k'=\omega(\log n)$ to run the main loop. So
 	if we stop at $(\log n)^{1+\delta}$ instead of $\sqrt{n}$ for some $\delta>0$, we would get a
 	quasipolynomial time algorithm with $O(n\log \log n)$ black-box complexity for Mastermind with $n$
 	colors. Notice that assuming SETH, this is faster than any approach based purely on Erd\H{o}s-Renyi
-	because the corresponding problem is NP-complete [TODO].
+        because the corresponding problem is NP-complete \cite{GOODRICH}.
 
-	However, we couldn't understand the explicit construction of detecting matrices in [TODO]\footnote{More
-	precisely, why wouldn't the sum of all $l_a$ be smaller or bigger than $n-\nu$?}. The construction of
-	search matrices is way clearer, so we unsuccessfully tried to bypass the use
+        However, we couldn't understand the explicit construction of detecting matrices in \cite{BSHOUTY}\footnote{More
+	precisely, in the proof of Theorem 4, why wouldn't the sum of all $l_a$ be smaller or bigger than
+        $n-@^\nu$? It doesn't seem like it's always the case, and this is confirmed by our implementation
+        of what we thought was the algorithm described there.}.
+        The construction of
+	search matrices is cleaner, so we unsuccessfully tried to bypass 
 	detecting matrices by reducing the coin weighing problem that we specifically need in Mastermind to search matrices
-	instead (e.g. using trick mentioned by [TODO]).
+        instead (e.g. using trick mentioned in the section 2.2 of \cite{CHOI}). Note that
+        \cite{GREBINSKI} provides construction of detecting matrices
+        using the probabilistic method, but as mentioned above, the ``decoding'' part cannot be done in polynomial 
+        time.
 		
 \end{remark}
 
@@ -118,7 +130,8 @@ is available on \texttt{https://github.com/JosephMarotte/MPRI-OptimizationHeuris
 
 Here we prove tight lower bounds and upper bounds for randomized local search (RLS), 
 almost tight lower bounds and upper bounds for $(1+1)\text{-EA}$ and an upper bound
-for the Erd\H{o}s-Renyi approach.
+for the Erd\H{o}s-Renyi approach. Pseudocodes of these algorithms are available in
+the appendix.
 
 \begin{notation}
     \begin{itemize}
@@ -256,14 +269,130 @@ We now give an upper bound for Erd\H{o}s-Renyi method:
 
 \section{Experimental results}
 
-talk about code structure 
+The implementation is in Python. We implemented the following abstractions in the $\texttt{src/}$ directory:
 
-\subsection{Exhaustive-Search}
-\subsubsection{Algorithm}
+\begin{itemize}
+    \item \texttt{blackbox.py}: act as a black-box: create an instance of Mastermind and handles the queries
+    \item \texttt{erdos\_renyi\_like.py}: implementation of the Erd\H{o}s-Renyi approach
+    \item \texttt{evolutionary\_algorithm\_abstract.py}: generic abstraction for all evolutionary and genetic algorithms
+    \item \texttt{log\_log.py}: unsuccessful attempt to implement the construction of detecting matrices
+    \item \texttt{mastermind\_problem.py}: generic abstraction for all heuristics solving Mastermind
+    \item \texttt{mu\_plus\_lambda\_evolution\_strategy.py} and others, \texttt{random\_local\_search.py}: implementation of the corresponding heuristics
+    \item \texttt{selection\_functions.py}: implementation of selection functions, two types corresponding either to $(\mu,\lambda)$ or $(\mu+\lambda)$
+    \item \texttt{step\_functions.py}: implementation of the selection of the next color at a given position
+    \item \texttt{utils.py}: common utility functions for all heuristics
+\end{itemize}
 
-The first algorithm is an exhaustive search
+For each of the analyzed algorithms, we indicated the size of the instance, some quantiles, the mean, the standard deviation
+over all experiments and the number of experiments.
 
-\begin{algorithm}[H]
+\subsection{Exhaustive search}
+
+\maxsizebox{\textwidth}{\paperheight}{\csvautotabular{../exploit_performance_value/exhaustive_search.csv}}
+
+For the corresponding sizes, the black-box complexity is roughly what we expect, namely $n^n/2$.
+
+\subsection{Erd\H{o}s-Renyi}
+
+\maxsizebox{\textwidth}{\paperheight}{\csvautotabular{../exploit_performance_value/erdos_renyi.csv}}
+
+As we mentioned at the beginning, it is difficult to analyze experimentally Erd\H{o}s-Renyi-based
+approaches, because even though the black-box complexity is small ($\tilde{O}(n)$ according to our
+theoretical results), the time complexity is exponential, so we can't compare it to the
+heuristics for $n$ sufficiently large.
+
+\subsection{Randomized local search}
+
+\begin{remark}
+There are have several ways to extend randomized local search (and other evolution-based heuristics),
+depending on how we choose to change the color at each position. This corresponds to the notion of
+\textit{step function} introduced in \cite{KOTZING}. In the setting of the article, it makes sense
+not to take necessarily the new color uniformly at random because the objective function considered
+depends on the distance between the colors at each position. For Mastermind with $n$ colors, it doesn't
+make any difference (except for the unit mutation strategy, which actually performs worse), so we
+pick the new colour uniformly at random in the following experiments.
+\end{remark}
+
+\maxsizebox{\textwidth}{\paperheight}{\csvautotabular{../exploit_performance_value/RLS_cleaned.csv}}
+
+For large sizes, it seems to confirm the theoretical results of $n^2 \log n$ (recall that
+we talk about natural logarithm here).
+
+\subsection{The $(1+1)$-Evolutionary Algorithm}
+
+First, we tried to experimentally find the best choice of mutation rate for the $(1+1)$-EA. In the
+following figure, each curve corresponds to the black-box complexity of some strategy for the choice
+of mutation rate. We consider 3 different static mutation rates ($0.5/n$, $1/n$, $2/n)$) and two different
+autoadjusting mutation rates: in the strategy $\text{autoadjust}(A,b)$, if the fitness of the offspring is
+better than the fitness of the original population, we multiply the mutation rate by $A$, otherwise we
+multiply it by $b$.
+
+\begin{figure}[h]
+    \begin{center}
+        \includegraphics[scale=0.7]{rate.png}
+    \end{center}
+\end{figure}
+
+Overall it seems that the best strategy among those that we tested is to pick the mutation rate $p=1/n$, so
+that's what we will do in all the following experiments.
+
+\maxsizebox{\textwidth}{\paperheight}{\csvautotabular{../exploit_performance_value/EA_mu_lambda.csv}}
+
+It seems that the black-box complexity is a little bit better than our theoretical upper bound of
+$2en^2\log n$, so the constant that we found is probably not tight (but it looks like it is on the right scale).
+
+\subsection{$(\mu +\lambda)$-Genetic Algorithm}
+
+\maxsizebox{\textwidth}{\paperheight}{    \csvautotabular{../exploit_performance_value/GA_mu_lambda.csv}}
+
+Having a bigger value for $\mu$ and $\lambda$ doesn't seem to yield significantly better results.
+
+Values for $\mu$ and $\lambda$ are not easy to choose. In some cases, I believe having a smaller value for $\mu$ speeds up the algorithm but may induce good assignments of a cell being forgotten (for example, 1 good cell change to be wrong, but 2 wrong changes to be good). Having a larger value for $\mu$ means older value are not immediately deleted, so in the same case, the information of the good cell which was changed may be retrieved, but it means in some cases only not so good will be used in the majority vote of A and the generated offspring may not be the best because of that.
+
+I believe the $1 + (\lambda, \lambda)GA$ we present now is a nice compromise.
+
+\subsection{$1 + (\lambda, \lambda)$-Genetic Algorithm}
+Finally we tried to adapt heuristically the $1 + (\lambda, \lambda)$-GA of \cite{DOERRDOERR}. In the pseudocode
+from the appendix, $F$ is the update strength, $c$ is the crossover rate and is equal to $1/\lambda$,
+and the mutation rate is equal to $\lambda/n$. The function $\text{cross}_c(x, y)$ outputs an array $z$ such that 
+$z_i = x_i$ with probability $c$ and $z_i = y_i$ otherwise. In the adaptive version, $c$ and the mutate rate
+change with the value of $\lambda$. In the non-adaptive version, they remain the same.
+
+\begin{figure}[h]
+    \maxsizebox{\textwidth}{\paperheight}{\csvautotabular{../exploit_performance_value/GA_1_plus_mu_lambda.csv}}
+    \caption{Non-adaptative version}
+\end{figure}
+
+\begin{figure}[h]
+    \maxsizebox{\textwidth}{\paperheight}{\csvautotabular{../exploit_performance_value/GA_1_plus_mu_lambda_adaptive.csv}}
+    \caption{Adaptative version}
+\end{figure}
+
+In the non-adaptive version, having a large $\lambda$ doesn't seem to yield significantly
+better results than having a smaller one (keep in mind the number of experiment is equal to 15).
+
+The adaptive case has better results. I believe the reason is that at all stages of the algorithm, the value of $\lambda$ is changed to have steps with better performances: a small $\lambda$ at the early stage of the algorithm because when most of the cells are different, changing only a few cells mean one of them is probably wrong and hence we have good chance of finding the real value of a cell. In the late stage of the algorithm, I believe the value of $\lambda$ increases, hence we have more mutation and more offspring. Among these offsprings, the best one $X$ is probably a poor choice in itself (because a lot of correct values of $S$ were mutated) and the cross function will have a small value for $c$ so we are almost ensured to keep the good values of the initial $S$ and only change the new one found by $X$.
+
+\section{Conclusion}
+
+In conclusion, it seems that all evolutionary-based algorithms that we presented are in average close
+to randomized local search, whose theoretical guarantee is asymptotically $n^2\log n$. Only the
+adaptative version of $1+(\lambda,\lambda)$-GA finds the target
+in a smaller expected number of queries than RLS (but we conjecture that the theoretical gain is at most a
+constant factor).
+
+Therefore, the ``algebraic'' approaches (Erd\H{o}s-Renyi-based and $O(n\log \log n)$) are probably also much better
+in practice, but the time complexity is a serious bottleneck in order to test these against the other
+heuristics. It would have been interesting to see how the quasi-polynomial time implementation of \cite{DOERR} performs
+in terms of black-box complexity in practice.
+
+\newpage
+\bibliographystyle{acm}
+\bibliography{rapport}
+
+\section*{Appendix: pseudocodes}
+
+\begin{algorithm}
 	\caption{Exhaustive Search}
 	\While{F(S) != N}{
 		$S \leftarrow $ next array;\\
@@ -271,16 +400,7 @@ The first algorithm is an exhaustive search
 	}
 \end{algorithm}
 
-\subsubsection{Result}
-
-\maxsizebox{\textwidth}{\paperheight}{\csvautotabular{../exploit_performance_value/exhaustive_search.csv}}
-
-The complexity is roughly what we expect : $\Theta(N^N)$.
-
-\subsection{Erdos-Renyi}
-
-\subsubsection{Algorithm}
-\begin{algorithm}[H]
+\begin{algorithm}
 	\Begin{
 		Pick a Set S of random array in $\{0, ..., N-1\}^N$ to Evaluate.\\
 		\ForEach{A in S}{compute F(A)}
@@ -292,26 +412,12 @@ The complexity is roughly what we expect : $\Theta(N^N)$.
 			Add A' to S'
 		}
 	}
-	\caption{Erdos Renyi Algorithm}
+        \caption{Erd\H{o}s-Renyi Algorithm}
 \end{algorithm}
 
-With a big enough value of $|S|$ (see Erdos-Renyi study), we have $|S'| = 1$ with high probability.
-
-\subsubsection{Result}
-
-\maxsizebox{\textwidth}{\paperheight}{\csvautotabular{../exploit_performance_value/erdos_renyi.csv}}
-
-We try to adapt the Erdos-Renyi algorithm to $N$ colors.
-The algorithm yields good result in term of number of call to the comparison function but the overall time needed is in $O(N^N)$.
-
-\subsection{Random Local Search}
-
-TODO: talk about step function here
-
-\subsubsection{Algorithm}
 \begin{algorithm}[H]
-	\caption{Random Local Search}
-	$S \leftarrow$ random array
+	\caption{Randomized Local Search}
+	$S \leftarrow$ random array\\
 	\While{F(S) != N}{
 		$i \leftarrow$ randint(0, N-1)\\
 		$S' \leftarrow S$\\
@@ -319,46 +425,23 @@ TODO: talk about step function here
 		\If{F(S') > F(S)}{$S \leftarrow S'$}
 	}
 \end{algorithm}
-\subsubsection{Result}
 
-\maxsizebox{\textwidth}{\paperheight}{\csvautotabular{../exploit_performance_value/RLS_cleaned.csv}}
-
-The experimental results seems to show that the overall complexity is in $N \cdot N \cdot log(N)$
-
-\section{Evolutionary Algorithm}
-We now study evolutionary algorithm.
-The step function used for all our algorithm consist of picking a random new color for a cell.
-
-\subsection{(1+1) Evolution Algorithm}
-
-\includegraphics{rate.png}
-
-TODO: expliquer le graphique
-
-\subsubsection{Algorithm}
 \begin{algorithm}[H]
-	\caption{(1+1)EA}
-	$S \leftarrow$ random array\\
-	\While{F(S) != N}{
-		$S' \leftarrow S$\\
-		\For{$i = 0;\ i < N;\ i++$}{
-			\If{random() <= mutation\_rate}{
-				$S'[i] \leftarrow step()$\\
-			}
-		}
-		\If{F(S') > F(S)}{$S \leftarrow S'$}
-	}
+        \caption{$(1+1)$-EA}
+        $S \leftarrow$ random array\\
+        \While{F(S) != N}{
+                $S' \leftarrow S$\\
+                \For{$i = 0;\ i < N;\ i++$}{
+                        \If{random() <= mutation\_rate}{
+                                $S'[i] \leftarrow step()$\\
+                        }
+                }
+                \If{F(S') > F(S)}{$S \leftarrow S'$}
+        }
 \end{algorithm}
 
-\subsubsection{Result}
-
-\maxsizebox{\textwidth}{\paperheight}{\csvautotabular{../exploit_performance_value/EA_mu_lambda.csv}}
-
-\subsection{$(\mu +\lambda)$Genetic Algorithm}
-
-\subsubsection{Algorithm}
 \begin{algorithm}[H]
-	\caption{$(\mu+\lambda)$GA}
+	\caption{$(\mu+\lambda)$-GA}
 	$S \leftarrow$ Set of $\mu$ random array\\
 	\While{max(F(S)) != N}{
 		$S' \leftarrow$ empty Set\\
@@ -375,26 +458,11 @@ TODO: expliquer le graphique
 	}
 \end{algorithm}
 
-\subsubsection{Result}
-
-\maxsizebox{\textwidth}{\paperheight}{    \csvautotabular{../exploit_performance_value/GA_mu_lambda.csv}}
-
-Having a bigger value for $\mu$ and $\lambda$ doesn't seems to yield better result. Maybe because the mutation rate was set to be equals to $\frac{1}{lambda}$.
-
-Value of $\mu$ and $\lambda$ are not easy to choose. In some case, I believe having a smaller value for $\mu$ speed up the algorithm but may makes good assignment of a cell being forgotten (for example, 1 good cell change to be wrong, but 2 wrong changes to be good). Having a larger value for $\mu$ means older value are not immediately deleted, so in the same case, the information of the good cell which was changed may be retrieved, but it means in some case only not so good will be used in the majority vote of A and the generated offspring may not be the best because because of that.
-
-I believe the $1 + (\lambda, \lambda)GA$ we present now get the best of both worlds.
-
-\subsection{$1 + (\lambda, \lambda)GA$}
-Lastly we tried to adapt the $1 + (\lambda, \lambda)GA$ of the "Optimal Parameter Choices Through Self-Adjustment: Applying the 1/5-th Rule in Discrete Settings" to our case.
-
-\subsubsection{Algorithm}
-\if 0
 \begin{algorithm}[H]
-	\caption{$1 + (\lambda, \lambda)$GA}
+	\caption{$1 + (\lambda, \lambda)$-GA}
 	$S \leftarrow$ random array\\
 	\While{F(S) != N}{
-		\textbf{Mutation phase}\\
+                \textbf{Mutation phase}\\
 		\Begin{
 			\For{$i = 0;\ i < \lambda;\ i++$}{
 				$X_i \leftarrow S$
@@ -418,40 +486,15 @@ Lastly we tried to adapt the $1 + (\lambda, \lambda)GA$ of the "Optimal Paramete
 			$Y \leftarrow Y_i$ such that $f(Y_i)$ is maximized\\
 		}
 		\textbf{Optional Auto Adjustment Rate}
-		\Begin{
+	        \Begin{
 			\If{F(Y) > F(S)}{$\lambda \leftarrow$ max($\lambda / F, 1)$}
-			\Else{$\lambda \leftarrow$ min($\lambda F^{1/4}, N$)}\\
+			\Else{$\lambda \leftarrow$ min($\lambda F^{1/4}, N$)}
 		}
 		
-		\If{F(Y) > F(S)}{S \leftarrow Y\\}
+		\If{F(Y) > F(S)}{
+                    $S \leftarrow Y$\\
+                }
 	}
 \end{algorithm}
-\fi
-Where $F$ is the update strength, $c$ is the crossover rate and is equals to $\frac{1}{\lambda}$, and the $mutation\_rate$ is equals to $\frac{\lambda}{N}$.
-
-The function $cross_c(x, y)$ output an array $z$ and $z[i] = x[i]$ with probability $c$ and $z[i] = y[i]$ otherwise.
-
-In the adaptive version, $c$ and $mutate\_rate$ change with the value of $\lambda$. In the case of the non-adaptive version, they remains the same (the initial value).
-
-\subsubsection{Result}
-
-\textbf{Non-adaptive version}
-
-\maxsizebox{\textwidth}{\paperheight}{\csvautotabular{../exploit_performance_value/GA_1_plus_mu_lambda.csv}}
-
-\textbf{Adaptive version}
-
-\maxsizebox{\textwidth}{\paperheight}{\csvautotabular{../exploit_performance_value/GA_1_plus_mu_lambda_adaptive.csv}}
-
-In the case of the non-adaptive version, having a large $\lambda$ doesn't seems to yield significant better results than having a smaller one (keep in mind the number of experiment is equals to 15).
-
-The adaptive case have better results than the other case. I believe the reason is that at all stages of the algorithm, the value of the $\lambda$ is changed to have step with better performances: a small lambda at the early stage of the algorithm because when most of the cells aren't equals, changing only a few cells means one of them is probably false and hence we have good chance of finding the real value of a cell.
-
-In the late stage of the algorithm, I believe the value of the lambda increase, hence we have more mutation and more offspring. Among these offspring, the best offspring $X$ is probably a poor choice in itself (because a lot of correct values of $S$ where mutated) and the cross function will have a small value for $c$ so we are almost ensured to keep the good values of the initial $S$ and only change the new one found by $X$.
-
-\section{Conclusion}
-To conclude for all the evolutionary algorithm the complexity seems to remains in $O(N \cdot N \cdot log(N))$, only the adaptive version have experimental results close to the random local search.
-
-TODO bibliography
 
 \end{document}
